@@ -5,14 +5,21 @@ import mongoose from 'mongoose'
 
 const app = express()
 const port = process.env.PORT || 5001;
-const mongodbURI = process.env.mongodbURI || "mongodb+srv://HassanKhan:OewGXk8AdeIHrkac@cluster0.gofugfc.mongodb.net/?retryWrites=true&w=majority"
+const mongodbURI = process.env.mongodbURI || "mongodb+srv://Hassan8264:hassan8264@cluster0.zm5puqf.mongodb.net/myCollection?retryWrites=true&w=majority"
 app.use(cors());
 app.use(express.json());
 
-// mongodb+srv://HassanKhan:OewGXk8AdeIHrkac@cluster0.gofugfc.mongodb.net/?retryWrites=true&w=majority
+// mongodb+srv://HassanKhan:OewGXk8AdeIHrkac@cluster0.gofugfc.mongodb.net/myCollection?retryWrites=true&w=majority
 
 // let products = []; // TODO: connect with mongodb instead
 
+let productSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    price: Number,
+    description: String,
+    createdOn: { type: Date, default: Date.now }
+});
+const productModel = mongoose.model('products', productSchema);
 
 app.post('/product', (req, res) => {
 
@@ -33,24 +40,41 @@ app.post('/product', (req, res) => {
     console.log(body.price)
     console.log(body.description)
 
-    products.push({
-        id: `${new Date().getTime()}`,
+    // products.push({
+    //     id: `${new Date().getTime()}`,
+    //     name: body.name,
+    //     price: body.price,
+    //     description: body.description
+    // });
+
+    productModel.create({
         name: body.name,
         price: body.price,
-        description: body.description
-    });
+        description: body.description,
+    },
 
-    res.send({
-        message: "product added successfully"
-    });
-})
+        (err, saved) => {
+            if (!err) {
+                console.log(saved);
+                
+                res.send({
+                    message: "product added successfully"
+                });
+            } else {
+                res.status(500).send({
+                    message: "server error"
+                })
+            }
+        })
+});
+
 
 app.get('/products', (req, res) => {
     res.send({
         message: "got all products successfully",
         data: products
     })
-})
+});
 
 app.get('/product/:id', (req, res) => {
 
@@ -76,7 +100,7 @@ app.get('/product/:id', (req, res) => {
         });
     }
     return;
-})
+});
 
 app.delete('/product/:id', (req, res) => {
     const id = req.params.id;
@@ -98,7 +122,7 @@ app.delete('/product/:id', (req, res) => {
             message: "delete fail: product not found"
         });
     }
-})
+});
 
 app.put('/products/:id', (req, res) => {
 
@@ -144,7 +168,7 @@ app.put('/products/:id', (req, res) => {
     res.send({
         message: "product added successfully"
     });
-})
+});
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
