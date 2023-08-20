@@ -15,10 +15,10 @@ function App() {
 
   const getAllProducts = async () => {
     try {
-      const response = await axios.get(`http://localhost:5001/products`)
+      const response = await axios.get(`http://localhost:5002/products`)
       console.log("response: ", response.data);
 
-      setProducts(response.data.data)
+      setProducts(response.data.data.reverse())
 
     } catch (error) {
       console.log("error in getting all products", error);
@@ -27,7 +27,7 @@ function App() {
 
   const deleteProduct = async (id) => {
     try {
-      const response = await axios.delete(`http://localhost:5001/product/${id}`)
+      const response = await axios.delete(`http://localhost:5002/product/${id}`)
       console.log("response: ", response.data);
 
       setLoadProduct(!loadProduct)
@@ -82,7 +82,7 @@ function App() {
     onSubmit: (values) => {
       console.log("values: ", values);
 
-      axios.post(`http://localhost:5001/product`, {
+      axios.post(`http://localhost:5002/product`, {
         name: values.productName,
         price: values.productPrice,
         description: values.productDescription,
@@ -125,7 +125,7 @@ function App() {
     onSubmit: (values) => {
       console.log("values: ", values);
 
-      axios.put(`http://localhost:5001/products/${editingProduct.id}`, {
+      axios.put(`http://localhost:5002/product/${editingProduct._id}`, {
         name: values.productName,
         price: values.productPrice,
         description: values.productDescription,
@@ -196,21 +196,21 @@ function App() {
 
       <div >
         {products.map((eachProduct, i) => (
-          <div key={eachProduct.id} style={{ border: "1px solid black", padding: 10, margin: 10, borderRadius: 15 }}>
+          <div key={eachProduct._id} style={{ border: "1px solid black", padding: 10, margin: 10, borderRadius: 15 }}>
             <h2>{eachProduct.name}</h2>
-            <p>{eachProduct.id}</p>
+            <p>{eachProduct._id}</p>
             <h5>{eachProduct.price}</h5>
             <p>{eachProduct.description}</p>
 
             <button onClick={() => {
-              deleteProduct(eachProduct.id)
+              deleteProduct(eachProduct._id)
             }}>delete</button>
 
             <button onClick={() => {
               editMode(eachProduct)
             }}>edit</button>
 
-            {(isEditMode && editingProduct.id === eachProduct.id) ?
+            {(isEditMode && editingProduct._id === eachProduct._id) ?
               <div>
 
                 <form onSubmit={editFormik.handleSubmit}>
@@ -264,7 +264,14 @@ function App() {
           </div>
         ))}
       </div>
+
+
     </div>
+
+
+
+
+
   );
 }
 
